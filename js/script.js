@@ -2,37 +2,37 @@
 
 window.addEventListener('DOMContentLoaded', () => {
       
-    const tabs = document.querySelectorAll('.tabheader__item'),
-          tabsContent = document.querySelectorAll('.tabcontent'),
-          tabsParent = document.querySelector('.tabheader__items');
+    const tabs = document.querySelectorAll('.tabheader__item'), //список названий меню
+          tabsContent = document.querySelectorAll('.tabcontent'), //картинка опредленного меню и его описание
+          tabsParent = document.querySelector('.tabheader__items'); //родитель, в котором находится список названий меню
 
-    function hideTabContent() {
-        tabsContent.forEach(item => {
-          item.style.display = 'none';
+    function hideTabContent() { //функция скрытия картинок меню с их описанием, проходимся по псевдомассиву
+        tabsContent.forEach(item => { //циклом forEach и на каждом элементе ставим запрет на демонстрацию
+          item.style.display = 'none'; //обращаемся к свойствам атрибута, меняем значение
         });
 
-        tabs.forEach(tab => {
-           tab.classList.remove('tabheader__item_active');
+        tabs.forEach(tab => { //проходим по списку названий меню
+           tab.classList.remove('tabheader__item_active');//убираем класс, если он там есть
         });
     }
 
-    function showTabContent(i = 0) {
-        tabsContent[i].style.display = 'block';
-        tabs[i].classList.add('tabheader__item_active');
+    function showTabContent(i = 0) { //функция показа определенного контента, по умолчанию это самый первый
+        tabsContent[i].style.display = 'block'; //обращаясь к конкретному элементу в псевдомассиве меняем свойство стиля
+        tabs[i].classList.add('tabheader__item_active');//и присваиваем класс, показывающий, что именно этот элемент сейчас активен
     }
 
     hideTabContent();
     showTabContent();
 
-    tabsParent.addEventListener('click', (event) => {
-        const target = event.target;
-
-        if (target && target.classList.contains('tabheader__item')) {
-            tabs.forEach((item, i) => {
-               if (target == item) {
-                hideTabContent();
-                showTabContent(i);            
-               }
+    tabsParent.addEventListener('click', (event) => {//присваивание события после клика на название меню, путем делегирования этих функций от родителя
+        const target = event.target;//переменная для облегчения пользования
+//event.target - элемент события, который совершенно точно был нами кликнут
+        if (target && target.classList.contains('tabheader__item')) {//проверка на объект клика и наличия у этого объекта нужного класса
+            tabs.forEach((item, i) => {//по циклу, обращаясь ещё разок к списку меню, порождая два аргумента
+               if (target == item) {//сравниваем кликнутый объект с тем, что есть в псевдомассиве, при совпадении
+                hideTabContent();//обнуляем свойства в контенте на демонстрацию и убираем всё лишнее и ненужное 
+                showTabContent(i);//указываем вторым аргументом, исходя из того, какая это итерация в цикле, какой именно контент            
+               }//надо показать пользователю
             });
         }
     });
