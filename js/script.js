@@ -1,6 +1,8 @@
 "use script";
 
 window.addEventListener('DOMContentLoaded', () => {
+
+    //Tabs
       
     const tabs = document.querySelectorAll('.tabheader__item'), //список названий меню
           tabsContent = document.querySelectorAll('.tabcontent'), //картинка опредленного меню и его описание
@@ -36,4 +38,21 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    //Timer
+
+    //создаем дедлайн, до которого должен работать счётчик
+    const deadline = '2021-03-29';
+
+    function getTimeRemaining(endTime) {
+        //свычисляем разницу между дедлайном и текущим временем
+        const offer = Date.parse(endTime) - Date.parse(new Date()),
+         //выводим количество дней, путем нахождения миллисекунд в дне, а потом разделения имеющихся милисекунд на это число     
+              days = Math.floor(offer / (1000 * 60 * 60 * 24)), //floor - округляет число вниз, т.е. просто откидывается хвост, без увеличения целого
+              hours = Math.floor((offer / (1000 * 60 * 60) % 24)),//берем общее кол-во миилсекунд и делим на кол-во милисек в 1 часе и % вычисляем лишние часы до полных суток
+              minutes = Math.floor((offer / 1000 / 60) % 60),
+              seconds = Math.floor((offer/ 1000) % 60);
+              
+        
+    }
 });
