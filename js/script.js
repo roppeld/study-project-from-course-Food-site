@@ -44,15 +44,55 @@ window.addEventListener('DOMContentLoaded', () => {
     //создаем дедлайн, до которого должен работать счётчик
     const deadline = '2021-03-29';
 
-    function getTimeRemaining(endTime) {
+    function getTimeRemaining(endTime) {//функция, вычисляющая остаток до дедлайна и расписывающая по переменными значения
         //свычисляем разницу между дедлайном и текущим временем
         const offer = Date.parse(endTime) - Date.parse(new Date()),
          //выводим количество дней, путем нахождения миллисекунд в дне, а потом разделения имеющихся милисекунд на это число     
               days = Math.floor(offer / (1000 * 60 * 60 * 24)), //floor - округляет число вниз, т.е. просто откидывается хвост, без увеличения целого
-              hours = Math.floor((offer / (1000 * 60 * 60) % 24)),//берем общее кол-во миилсекунд и делим на кол-во милисек в 1 часе и % вычисляем лишние часы до полных суток
-              minutes = Math.floor((offer / 1000 / 60) % 60),
+              hours = Math.floor((offer / (1000 * 60 * 60) % 24)),//берем общее кол-во милисекунд и делим на кол-во милисек в часе и не даем выйти за пределы 24 часов 
+              minutes = Math.floor((offer / 1000 / 60) % 60),//идентично
               seconds = Math.floor((offer/ 1000) % 60);
               
-        
+        return { //чтобы вернуть созданные внутри функции переменные, возвращаем из функции объект
+            'total': offer, //с созданными внутри него функциями с помещенными туда значениями - нашими переменными
+            'days': days,
+            'hours': hours,
+            'minutes': minutes,
+            'seconds': seconds
+        };
     }
+
+    function getZero(num) {//функция помощник, добавляющая 0 перед каждой единичной цифрой
+        if (num >= 0 && num < 10) {
+            return `0${num}`;
+        } else {
+            return num;
+        }
+    }
+
+    function setClock(selector, endTime) {//функция установки таймера на сайт
+        const timer = document.querySelector(selector),
+              days = timer.querySelector('#days'),
+              hours = timer.querySelector('#hours'),
+              minutes = timer.querySelector('#minutes'),
+              seconds = timer.querySelector('#seconds'),
+              timeInterval = setInterval(updateClock, 1000);
+
+              updateClock();//сначала апдейтнуть, потом уже устанавливать
+
+        function updateClock() {//когда функция запустится она расчитает нужное нам время и на основании этих сведений
+            const t = getTimeRemaining(endTime);//занесенных в объект, она распихает это по нужным местам на странице
+
+            days.innerHTML = getZero(t.days); //обращаемся к тегу HTML с указанным айдишником и ставим туда значение
+            hours.innerHTML = getZero(t.hours);//значение заносится туда, взятое из вынесенного объекта, обращаясь к его свойствам
+            minutes.innerHTML = getZero(t.minutes);
+            seconds.innerHTML = getZero(t.seconds);
+
+            if (t.total <= 0) {
+                clearInterval(timeInterval);
+            }
+        }
+    }
+
+    setClock('.timer', deadline);
 });
