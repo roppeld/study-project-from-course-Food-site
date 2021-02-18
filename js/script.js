@@ -88,8 +88,8 @@ window.addEventListener('DOMContentLoaded', () => {
             minutes.innerHTML = getZero(t.minutes);
             seconds.innerHTML = getZero(t.seconds);
 
-            if (t.total <= 0) {
-                clearInterval(timeInterval);
+            if (t.total <= 0) {//если общее количество милисекунд подошло к нулю, исходя из сравнений с дедлайном. то остановить таймер
+                clearInterval(timeInterval);//а то пойдут минусовые значения
             }
         }
     }
