@@ -121,13 +121,18 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function modalCancel() {
-        modalClose.addEventListener('click', () => {
-           closeModal();
-        });
+        modalClose.addEventListener('click', closeModal);
+
         modal.addEventListener('click', (event) => {
            if (event.target === modal) {
             closeModal();
            }
+        });
+
+        document.addEventListener('keydown', (event) =>{
+            if (event.code === 'Escape') {
+                closeModal();
+            }
         });
     }
 
