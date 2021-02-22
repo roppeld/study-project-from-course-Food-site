@@ -49,7 +49,8 @@ window.addEventListener('DOMContentLoaded', () => {
         const offer = Date.parse(endTime) - Date.parse(new Date()),
          //выводим количество дней, путем нахождения миллисекунд в дне, а потом разделения имеющихся милисекунд на это число     
               days = Math.floor(offer / (1000 * 60 * 60 * 24)), //floor - округляет число вниз, т.е. просто откидывается хвост, без увеличения целого
-              hours = Math.floor((offer / (1000 * 60 * 60) % 24)),//берем общее кол-во милисекунд и делим на кол-во милисек в часе и не даем выйти за пределы 24 часов 
+              hours = Math.floor((offer / (1000 * 60 * 60) % 24)),//берем общее кол-во милисекунд и делим на кол-во милисек в часе и не даем выйти 
+              //за пределы 24 часов 
               minutes = Math.floor((offer / 1000 / 60) % 60),//идентично
               seconds = Math.floor((offer/ 1000) % 60);
               
@@ -98,36 +99,36 @@ window.addEventListener('DOMContentLoaded', () => {
 
     //Modal
 
-    const modalTrigger = document.querySelectorAll('[data-modal]'),
+    const modalTrigger = document.querySelectorAll('[data-modal]'),//кнопки с разными классами, но одним дата атрибутом
           modal = document.querySelector('.modal'),
           modalClose = document.querySelector('[data-close]');
           
-    function modalOpen() {
+    function modalOpen() {//выцепленные по дата атрибутам кнопки здесь получают свое событие
         modalTrigger.forEach(item => {
            item.addEventListener('click', openModal);
         });
     }
 
-    function openModal() {
+    function openModal() {//вынесенный в отдельную функцию функционал открытия модального окна
         modal.classList.add('show');
         modal.classList.remove('hide');
         modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        clearInterval(modalTimer);
+        document.body.style.overflow = 'hidden';//запрет на скролинг при открытом окне
+        clearInterval(modalTimer);//при первом открытии таймер обнуляется, незачем снова показывать окно
     }
 
-    function closeModal() {
+    function closeModal() {//вынесеный в отдельную функцию функционал закрытия модального окна
         modal.classList.remove('show');
             modal.classList.add('hide');
             modal.style.display = 'none';
-            document.body.style.overflow = '';
+            document.body.style.overflow = '';//скролинг выставляется по умолчанию, уже на решение браузера
     }
 
     function modalCancel() {
-        modalClose.addEventListener('click', closeModal);
+        modalClose.addEventListener('click', closeModal);//при клике на крестик - закрывается модальное окно
 
-        modal.addEventListener('click', (event) => {//
-           if (event.target === modal) {
+        modal.addEventListener('click', (event) => {//вешаем событие закрытия модального окна, при клике на
+           if (event.target === modal) {//любое место подложки, т.е. родителя элемента
             closeModal();
            }
         });
@@ -139,18 +140,20 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const modalTimer = setTimeout(openModal, 120000);
+    const modalTimer = setTimeout(openModal, 120000);//таймер появлеия модельного окна после 2 минут
 
     function showModalWindowByScroll() {//pageYOffset отслеживает сколько пикселейй отлистал пользователь
         //по оси Y - горизонтальная ось. от которой идет отсчёт до самого верха
         if (window.pageYOffset + document.documentElement.clientHeight === document.documentElement
-            .scrollHeight) {
-            openModal();
-            window.removeEventListener('scroll', showModalWindowByScroll);
+            .scrollHeight) {//плюсуем отскроленное вверх с имеющимся сейчас на экране перед пользователем
+            openModal();//после того как сумма равна всей высоте элемента с учетом невидимого - открываем окно
+            window.removeEventListener('scroll', showModalWindowByScroll);//убираем скролл как только докрутили
+            //первый раз
         }
     }
 
-    window.addEventListener('scroll', showModalWindowByScroll);
+    window.addEventListener('scroll', showModalWindowByScroll);//вешаем событие показа модального окна 
+    //при скроле страницы
 
     modalOpen();
     modalCancel();
