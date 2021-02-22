@@ -104,13 +104,16 @@ window.addEventListener('DOMContentLoaded', () => {
           
     function modalOpen() {
         modalTrigger.forEach(item => {
-           item.addEventListener('click', () => {
-                modal.classList.add('show');
-                modal.classList.remove('hide');
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            });
+           item.addEventListener('click', openModal);
         });
+    }
+
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimer);
     }
 
     function closeModal() {
@@ -123,18 +126,31 @@ window.addEventListener('DOMContentLoaded', () => {
     function modalCancel() {
         modalClose.addEventListener('click', closeModal);
 
-        modal.addEventListener('click', (event) => {
+        modal.addEventListener('click', (event) => {//
            if (event.target === modal) {
             closeModal();
            }
         });
 
-        document.addEventListener('keydown', (event) =>{
-            if (event.code === 'Escape') {
-                closeModal();
+        document.addEventListener('keydown', (event) => {//закрытие модального окна кнопкой Esc
+            if (event.code === 'Escape' && modal.classList.contains('show')) {//чтобы событие срабатывало
+                closeModal();//только если модальное окно открытое
             }
         });
     }
+
+    const modalTimer = setTimeout(openModal, 120000);
+
+    function showModalWindowByScroll() {//pageYOffset отслеживает сколько пикселейй отлистал пользователь
+        //по оси Y - горизонтальная ось. от которой идет отсчёт до самого верха
+        if (window.pageYOffset + document.documentElement.clientHeight === document.documentElement
+            .scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', showModalWindowByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', showModalWindowByScroll);
 
     modalOpen();
     modalCancel();
