@@ -161,24 +161,24 @@ window.addEventListener('DOMContentLoaded', () => {
     //Используем классы для карточек
 
     class MenuCard {
-        constructor(src, alt, title, descr, price, parentSelector) {
-            this.src = src;
+        constructor(src, alt, title, descr, price, parentSelector) {//конструктор нашего объекта для 
+            this.src = src;//создания карточки на сайте
             this.alt = alt;
             this.title = title;
             this.descr = descr;
             this.price = price;
-            this.parent = document.querySelector(parentSelector);
+            this.parent = document.querySelector(parentSelector);//вносим свойство куда будет вноситься нужный нам селектор, куда мы захотим внести созданный объект
             this.transfer = 27;
-            this.changeToUAH();
+            this.changeToUAH();//можно прямо в констукторе вызвать метод принадлежащий классу, а занчит и экземпляру класса для манипуляции над значениями свойств объекта
         }
 
         changeToUAH() {
             this.price = this.price * this.transfer;
         }
 
-        render() {
-            const element = document.createElement('div');
-            element.innerHTML = `
+        render() {//работа по созданию элемента и наполнением его тэгами и добавлению элемента на страницу 
+            const element = document.createElement('div'); //создание элемента пока ещё в файле джаваскрипта его последующее наполнение через innerHTML
+            element.innerHTML = ` 
                 <div class="menu__item">
                     <img src=${this.src} alt=${this.alt}>
                     <h3 class="menu__item-subtitle">${this.title}</h3>
@@ -190,7 +190,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
              `;
-            this.parent.append(element);
+            this.parent.append(element);//добавление этого созданного элемента в верстку используя свойство parent как адрес, куда добавлять
         }
     }
 
@@ -201,7 +201,7 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         7,
         '.menu .container'
-    ).render();
+    ).render();//создали без указания ссылок на объект ради его единичного использования с последующим удалением
 
     new MenuCard(
         "img/tabs/elite.jpg",
