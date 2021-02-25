@@ -161,12 +161,13 @@ window.addEventListener('DOMContentLoaded', () => {
     //Используем классы для карточек
 
     class MenuCard {
-        constructor(src, alt, title, descr, price, parentSelector) {//конструктор нашего объекта для 
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {//конструктор нашего объекта для 
             this.src = src;//создания карточки на сайте
             this.alt = alt;
             this.title = title;
             this.descr = descr;
             this.price = price;
+            this.classes = classes;//передаваться будет массив и работаnь надо с этим как с массивом
             this.parent = document.querySelector(parentSelector);//вносим свойство куда будет вноситься нужный нам селектор, куда мы захотим внести созданный объект
             this.transfer = 27;
             this.changeToUAH();//можно прямо в констукторе вызвать метод принадлежащий классу, а занчит и экземпляру класса для манипуляции над значениями свойств объекта
@@ -178,8 +179,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
         render() {//работа по созданию элемента и наполнением его тэгами и добавлению элемента на страницу 
             const element = document.createElement('div'); //создание элемента пока ещё в файле джаваскрипта его последующее наполнение через innerHTML
+            //чтобы сразу создавать не тупо div, а нужный класс, надо присваивать menu__item div
+            //но чтобы не было ошибок при отсутствии классов, вручную прпоисываем проверку
+            if (this.classes.length === 0) {//чтоббы не работать с элементом массива, добавим вручную нужный класс строкой
+                this.element = 'menu__item';
+                element.classList.add(this.element);//а потом это же добавим в переменную вместо div
+            } else {//если всё-таки хоть один класс имется в массиве, то через цикл передать каждый элемент в переменную element
+            this.classes.forEach(classNames => element.classList.add(classNames));//тогда сразу будем без div создавать нужный класс
+            }
             element.innerHTML = ` 
-                <div class="menu__item">
                     <img src=${this.src} alt=${this.alt}>
                     <h3 class="menu__item-subtitle">${this.title}</h3>
                     <div class="menu__item-descr">${this.descr}</div>
@@ -188,7 +196,6 @@ window.addEventListener('DOMContentLoaded', () => {
                         <div class="menu__item-cost">Цена:</div>
                         <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                     </div>
-                </div>
              `;
             this.parent.append(element);//добавление этого созданного элемента в верстку используя свойство parent как адрес, куда добавлять
         }
@@ -200,7 +207,11 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню "Фитнес"',
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         7,
-        '.menu .container'
+        '.menu .container',
+        //здесь нужно добавить класс menu__item, но у нас прпоисана проверка на то, что он может отсутствовать и будет прописан на этапе разработки 
+        //вручную и всё равно всё будет работать
+        'menu__item'//но мы все же пропишем это и особенно пропишем строкой, а не через точку
+        //потому что позже методом добавления эта строка сама превратится во все нужное
     ).render();//создали без указания ссылок на объект ради его единичного использования с последующим удалением
 
     new MenuCard(
