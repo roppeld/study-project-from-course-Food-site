@@ -231,4 +231,46 @@ window.addEventListener('DOMContentLoaded', () => {
         14,
         '.menu .container'
     ).render();
+
+    //Forms
+
+    const forms = document.querySelectorAll('form');
+
+    const message = {
+        loading: 'загрузка',
+        success: 'Спасибо! Мы с вами свяжемся',
+        failure: 'Что-то пошло не так...'
+    };
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (event) =>{
+            event.preventDefault();
+
+            const statusMessage = document.createElement('div');
+            statusMessage.classList.add('status');
+            statusMessage.textContent = message.loading;
+            form.append(statusMessage);
+            
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+// всегда надо проверять у инпутов или любой другой интерактивности атрибут name, а не то FormData не найдет это
+            request.setRequestHeader('Content-type', 'multipart/form-data');
+            const formData = new FormData(form);//и не сможет сделать нжных действий 
+
+            request.send(formData);//тут уже запрос POST поэтому есть тело(body) у метода send()
+
+            request.addEventListener('load', () => {//событие на полное выполнение запроса
+                if (request.status === 200) {// 200 - успешное выполнение запроста
+                    console.log(request.response);//ответ от сервера
+                    statusMessage.textContent = message.success;
+                } else {
+                    statusMessage.textContent = message.failure;
+                }
+            });
+        });
+    }
 });
