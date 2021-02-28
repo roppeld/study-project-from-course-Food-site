@@ -268,7 +268,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             const object = {};
             formData.forEach(function(value, key) {//почему-то строго в таком порядке поступления аргументов в параметры
-                object[key] = value;
+                object[key] = value;//а иначе и не сработает (я про аргументы в скобках)
             });
 
             const jsonFormat = JSON.stringify(object);
@@ -288,5 +288,21 @@ window.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+    }
+
+    function showThanksModal() {
+        const previousModalDialog = document.querySelector('.modal__dialog');
+
+        previousModalDialog.classList.add('show');//если не будет работать, проверить здесь
+        openModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+            <div class ="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title"></div>
+            </div>
+        `;
     }
 });
