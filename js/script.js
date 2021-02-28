@@ -267,7 +267,7 @@ window.addEventListener('DOMContentLoaded', () => {
             //для этого надо создать другой объект и перебрать всё, что в формдате в этот новый объект
 
             const object = {};
-            formData.forEach((key, value) => {
+            formData.forEach(function(value, key) {//почему-то строго в таком порядке поступления аргументов в параметры
                 object[key] = value;
             });
 
