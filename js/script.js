@@ -260,9 +260,20 @@ window.addEventListener('DOMContentLoaded', () => {
 // всегда надо проверять у инпутов или любой другой интерактивности атрибут name, а не то FormData не найдет это
             //когда мы используем связку XMLHttpRequest объекта
             //и FormData объект, то заголовок нам устанавливать не нужно, он подгружается автоматически
-            const formData = new FormData(form); 
+            //но когда на сервер отправлять надо запрос в формате json то заголовок нам уже нужен 
+            request.setRequestHeader('Content-type', 'application/json');//но указывается другой тип контента json
+            const formData = new FormData(form); //но теперь объект formdata надо превратить в формат json
 
-            request.send(formData);//тут уже запрос POST поэтому есть тело(body) у метода send()
+            //для этого надо создать другой объект и перебрать всё, что в формдате в этот новый объект
+
+            const object = {};
+            formData.forEach((key, value) => {
+                object[key] = value;
+            });
+
+            const jsonFormat = JSON.stringify(object);
+
+            request.send(jsonFormat);//тут уже запрос POST поэтому есть тело(body) у метода send()
 
             request.addEventListener('load', () => {//событие на полное выполнение запроса
                 if (request.status === 200) {// 200 - успешное выполнение запроса
