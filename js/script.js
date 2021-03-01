@@ -126,17 +126,23 @@ window.addEventListener('DOMContentLoaded', () => {
     function modalCancel() {
 
         modal.addEventListener('click', (event) => { //вешаем событие закрытия модального окна, при клике на
-           //любое место подложки, т.е. родителя элемента и если кликули на крестик, в котором произошла такая глупая проверочка
+           //любое место подложки, т.е. родителя элемента и если кликнули на крестик, в котором произошла такая глупая проверочка
             if (event.target === modal || event.target.getAttribute('data-close') == '') { //чтобы заставить после этого происходить закрытию
                 closeModal();
+                backToForm();
+                clearInterval(backToNormal);
             }
         });
 
         document.addEventListener('keydown', (event) => { //закрытие модального окна кнопкой Esc
             if (event.code === 'Escape' && modal.classList.contains('show')) { //чтобы событие срабатывало
                 closeModal(); //только если модальное окно открытое
+                backToForm();
+                clearInterval(backToNormal);
             }
         });
+
+        
     }
 
     const modalTimer = setTimeout(openModal, 120000);//таймер появлеия модельного окна после 2 минут
@@ -236,7 +242,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const forms = document.querySelectorAll('form');
 
     const message = {
-        loading: 'загрузка',
+        loading: 'img/form/054 spinner.svg',
         success: 'Спасибо! Мы с вами свяжемся',
         failure: 'Что-то пошло не так...'
     };
@@ -249,9 +255,12 @@ window.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (event) =>{
             event.preventDefault();
 
-            const statusMessage = document.createElement('div');
-            statusMessage.classList.add('status');
-            statusMessage.textContent = message.loading;
+            const statusMessage = document.createElement('img');
+            statusMessage.src = message.loading;
+            statusMessage.style.cssText = `
+                display: block;
+                margin: 0 auto;
+            `;
             form.append(statusMessage);
             
             const request = new XMLHttpRequest();
@@ -287,14 +296,22 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const backToNormal = function() {
+        setTimeout(() => {
+            backToForm();
+            closeModal();
+        }, 3000);
+    };
+ 
+    const previousModalDialog = document.querySelector('.modal__dialog');
+    const thanksModal = document.createElement('div');
+
     function showThanksModal(message) {
-        const previousModalDialog = document.querySelector('.modal__dialog');
 
         previousModalDialog.classList.add('hide');
         previousModalDialog.style.display = 'none';
         openModal();
 
-        const thanksModal = document.createElement('div');
         thanksModal.classList.add('modal__dialog');
         thanksModal.innerHTML = `
             <div class ="modal__content">
@@ -304,24 +321,13 @@ window.addEventListener('DOMContentLoaded', () => {
         `;
 
         modal.append(thanksModal);
-        const backToNormal = setTimeout(() => {
-            backToForm();
-            closeModal();
-        }, 3000);
+        backToNormal();
+    }
 
-        thanksModal.addEventListener('click', (event) => {//если пользователь нажмет на крестик в благодарственной модалке
-            if (event.target.getAttribute('data-close') == '') {//то произвести тоже самое, что и в асинхронном счетчике
-                backToForm();//только теперь счётчик обнулить, потому что в противном случае он 
-                clearInterval(backToNormal);//продолжит выполнять код, а если в этот ммомент открыть модалку формы
-                closeModal();//произойдет глупое закрывание через секунду, т.к. счётчик продолжает работать, а это уже не нужно
-            }
-        });
-
-        function backToForm() {
-            thanksModal.remove();
-            previousModalDialog.classList.remove('hide');
-            previousModalDialog.classList.add('show');
-            previousModalDialog.style.display = 'block';
-        }
+    function backToForm() {
+        thanksModal.remove();
+        previousModalDialog.classList.remove('hide');
+        previousModalDialog.classList.add('show');
+        previousModalDialog.style.display = 'block';
     }
 });
