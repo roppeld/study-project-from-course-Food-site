@@ -100,8 +100,7 @@ window.addEventListener('DOMContentLoaded', () => {
     //Modal
 
     const modalTrigger = document.querySelectorAll('[data-modal]'), //кнопки с разными классами, но одним дата атрибутом
-        modal = document.querySelector('.modal'),
-        modalClose = document.querySelector('[data-close]');
+        modal = document.querySelector('.modal');
 
     function modalOpen() { //выцепленные по дата атрибутам кнопки здесь получают свое событие
         modalTrigger.forEach(item => {
@@ -114,7 +113,7 @@ window.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('hide');
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden'; //запрет на скролинг при открытом окне
-        //clearInterval(modalTimer);//при первом открытии таймер обнуляется, незачем снова показывать окно
+        clearInterval(modalTimer);//при первом открытии таймер обнуляется, незачем снова показывать окно
     }
 
     function closeModal() { //вынесеный в отдельную функцию функционал закрытия модального окна
@@ -125,10 +124,10 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function modalCancel() {
-        modalClose.addEventListener('click', closeModal); //при клике на крестик - закрывается модальное окно
 
         modal.addEventListener('click', (event) => { //вешаем событие закрытия модального окна, при клике на
-            if (event.target === modal) { //любое место подложки, т.е. родителя элемента
+           //любое место подложки, т.е. родителя элемента и если кликули на крестик, в котором произошла такая глупая проверочка
+            if (event.target === modal || event.target.getAttribute('data-close') == '') { //чтобы заставить после этого происходить закрытию
                 closeModal();
             }
         });
@@ -140,7 +139,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // const modalTimer = setTimeout(openModal, 120000);//таймер появлеия модельного окна после 2 минут
+    const modalTimer = setTimeout(openModal, 120000);//таймер появлеия модельного окна после 2 минут
 
     function showModalWindowByScroll() { //pageYOffset отслеживает сколько пикселейй отлистал пользователь
         //по оси Y - горизонтальная ось. от которой идет отсчёт до самого верха
@@ -278,22 +277,21 @@ window.addEventListener('DOMContentLoaded', () => {
             request.addEventListener('load', () => {//событие на полное выполнение запроса
                 if (request.status === 200) {// 200 - успешное выполнение запроса
                     console.log(request.response);//ответ от сервера
-                    statusMessage.textContent = message.success;
+                    showThanksModal(message.success);
                     form.reset();
-                    setTimeout(() => {
-                        statusMessage.remove();
-                    }, 2000);
+                    statusMessage.remove();
                 } else {
-                    statusMessage.textContent = message.failure;
+                    showThanksModal(message.failure);
                 }
             });
         });
     }
 
-    function showThanksModal() {
+    function showThanksModal(message) {
         const previousModalDialog = document.querySelector('.modal__dialog');
 
-        previousModalDialog.classList.add('show');//если не будет работать, проверить здесь
+        previousModalDialog.classList.add('hide');
+        previousModalDialog.style.display = 'none';
         openModal();
 
         const thanksModal = document.createElement('div');
@@ -301,8 +299,29 @@ window.addEventListener('DOMContentLoaded', () => {
         thanksModal.innerHTML = `
             <div class ="modal__content">
                 <div class="modal__close" data-close>×</div>
-                <div class="modal__title"></div>
+                <div class="modal__title">${message}</div>
             </div>
         `;
+
+        modal.append(thanksModal);
+        const backToNormal = setTimeout(() => {
+            backToForm();
+            closeModal();
+        }, 3000);
+
+        thanksModal.addEventListener('click', (event) => {//если пользователь нажмет на крестик в благодарственной модалке
+            if (event.target.getAttribute('data-close') == '') {//то произвести тоже самое, что и в асинхронном счетчике
+                backToForm();//только теперь счётчик обнулить, потому что в противном случае он 
+                clearInterval(backToNormal);//продолжит выполнять код, а если в этот ммомент открыть модалку формы
+                closeModal();//произойдет глупое закрывание через секунду, т.к. счётчик продолжает работать, а это уже не нужно
+            }
+        });
+
+        function backToForm() {
+            thanksModal.remove();
+            previousModalDialog.classList.remove('hide');
+            previousModalDialog.classList.add('show');
+            previousModalDialog.style.display = 'block';
+        }
     }
 });
