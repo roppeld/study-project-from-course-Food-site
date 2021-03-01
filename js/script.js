@@ -129,20 +129,15 @@ window.addEventListener('DOMContentLoaded', () => {
            //любое место подложки, т.е. родителя элемента и если кликнули на крестик, в котором произошла такая глупая проверочка
             if (event.target === modal || event.target.getAttribute('data-close') == '') { //чтобы заставить после этого происходить закрытию
                 closeModal();
-                backToForm();
-                clearInterval(backToNormal);
             }
         });
 
         document.addEventListener('keydown', (event) => { //закрытие модального окна кнопкой Esc
             if (event.code === 'Escape' && modal.classList.contains('show')) { //чтобы событие срабатывало
                 closeModal(); //только если модальное окно открытое
-                backToForm();
-                clearInterval(backToNormal);
             }
         });
 
-        
     }
 
     const modalTimer = setTimeout(openModal, 120000);//таймер появлеия модельного окна после 2 минут
@@ -252,7 +247,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     function postData(form) {
-        form.addEventListener('submit', (event) =>{
+        form.addEventListener('submit', (event) => {
             event.preventDefault();
 
             const statusMessage = document.createElement('img');
@@ -261,7 +256,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 display: block;
                 margin: 0 auto;
             `;
-            form.append(statusMessage);
+            form.insertAdjacentElement('afterend', statusMessage);
             
             const request = new XMLHttpRequest();
             request.open('POST', 'server.php');//указали, какой будет тип запроса и указали путь к серверу его принимающий
@@ -296,19 +291,21 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const backToNormal = function() {
+    const backToNormal = () => {
         setTimeout(() => {
             backToForm();
             closeModal();
-        }, 3000);
+        }, 5000);
     };
+
  
-    const previousModalDialog = document.querySelector('.modal__dialog');
-    const thanksModal = document.createElement('div');
+    const previousModalDialog = document.querySelector('.modal__dialog'),
+          thanksModal = document.createElement('div');
 
     function showThanksModal(message) {
 
         previousModalDialog.classList.add('hide');
+        previousModalDialog.classList.remove('show');
         previousModalDialog.style.display = 'none';
         openModal();
 
