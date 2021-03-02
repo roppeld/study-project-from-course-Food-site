@@ -258,14 +258,7 @@ window.addEventListener('DOMContentLoaded', () => {
             `;
             form.insertAdjacentElement('afterend', statusMessage);
             
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');//указали, какой будет тип запроса и указали путь к серверу его принимающий
-// всегда надо проверять у инпутов или любой другой интерактивности атрибут name, а не то FormData не найдет это
-            //когда мы используем связку XMLHttpRequest объекта
-            //и FormData объект, то заголовок нам устанавливать не нужно, он подгружается автоматически
-            //но когда на сервер отправлять надо запрос в формате json то заголовок нам уже нужен 
-            request.setRequestHeader('Content-type', 'application/json');//но указывается другой тип контента json
-            const formData = new FormData(form); //но теперь объект formdata надо превратить в формат json
+            const formData = new FormData(form); //объект formdata надо превратить в формат json
 
             //для этого надо создать другой объект и перебрать всё, что в формдате в этот новый объект
 
@@ -274,20 +267,23 @@ window.addEventListener('DOMContentLoaded', () => {
                 object[key] = value;//а иначе и не сработает (я про аргументы в скобках)
             });
 
-            const jsonFormat = JSON.stringify(object);
-
-            request.send(jsonFormat);//тут уже запрос POST поэтому есть тело(body) у метода send()
-
-            request.addEventListener('load', () => {//событие на полное выполнение запроса
-                if (request.status === 200) {// 200 - успешное выполнение запроса
-                    console.log(request.response);//ответ от сервера
-                    showThanksModal(message.success);
-                    form.reset();
-                    statusMessage.remove();
-                } else {
-                    showThanksModal(message.failure);
-                }
-            });
+           fetch('server.php', {
+               method: "POST",
+               headers: {
+                   'Content-type': 'application/json'
+               },
+               body: JSON.stringify(object)
+           }).then(data => data.text())
+           .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                statusMessage.remove();
+           })
+           .catch(() => {
+                showThanksModal(message.failure);
+           }).finally(() => {
+                form.reset();
+           });
         });
     }
 
@@ -295,7 +291,7 @@ window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             backToForm();
             closeModal();
-        }, 5000);
+        }, 2000);
     };
 
  
