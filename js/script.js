@@ -323,4 +323,8 @@ window.addEventListener('DOMContentLoaded', () => {
         previousModalDialog.classList.add('show');
         previousModalDialog.style.display = 'block';
     }
+
+    fetch('058 db.json')
+       .then((data) => data.json())//распаковка из json формата с помощью метода json()
+       .then((res) => console.log(res));
 });
