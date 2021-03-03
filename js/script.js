@@ -324,7 +324,7 @@ window.addEventListener('DOMContentLoaded', () => {
         previousModalDialog.style.display = 'block';
     }
 
-    fetch('058 db.json')
+    fetch('http://localhost:3000/menu')
        .then((data) => data.json())//распаковка из json формата с помощью метода json()
        .then((res) => console.log(res));
 });
