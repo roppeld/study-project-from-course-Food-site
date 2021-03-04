@@ -180,12 +180,12 @@ window.addEventListener('DOMContentLoaded', () => {
         render() {//работа по созданию элемента и наполнением его тэгами и добавлению элемента на страницу 
             const element = document.createElement('div'); //создание элемента пока ещё в файле джаваскрипта его последующее наполнение через innerHTML
             //чтобы сразу создавать не тупо div, а нужный класс, надо присваивать menu__item div
-            //но чтобы не было ошибок при отсутствии классов, вручную прпоисываем проверку
-            if (this.classes.length === 0) {//чтоббы не работать с элементом массива, добавим вручную нужный класс строкой
+            //но чтобы не было ошибок при отсутствии классов, вручную прописываем проверку
+            if (this.classes.length === 0) {//чтобы не работать с элементом массива, добавим вручную нужный класс строкой
                 this.element = 'menu__item';
-                element.classList.add(this.element);//а потом это же добавим в переменную вместо div
+                element.classList.add(this.element);
             } else {//если всё-таки хоть один класс имется в массиве, то через цикл передать каждый элемент в переменную element
-            this.classes.forEach(classNames => element.classList.add(classNames));//тогда сразу будем без div создавать нужный класс
+            this.classes.forEach(classNames => element.classList.add(classNames));//тогда сразу будем без лишнего div создавать нужный класс
             }
             element.innerHTML = ` 
                     <img src=${this.src} alt=${this.alt}>
