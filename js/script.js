@@ -201,36 +201,22 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        'Меню "Фитнес"',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        7,
-        '.menu .container',
-        //здесь нужно добавить класс menu__item, но у нас прпоисана проверка на то, что он может отсутствовать и будет прописан на этапе разработки 
-        //вручную и всё равно всё будет работать
-        'menu__item'//но мы все же пропишем это и особенно пропишем строкой, а не через точку
-        //потому что позже методом добавления эта строка сама превратится во все нужное
-    ).render();//создали без указания ссылок на объект ради его единичного использования с последующим удалением
+    const getResource = async (url) => {//ключевое слово async сообщает, что внутри будет какой-то асинхронный код
+        const res = await fetch(url);//парный оператор, он дает понять, что выполнение этого действия нужно дождаться
 
-    new MenuCard(
-        "img/tabs/elite.jpg",
-        "elite",
-        'Меню “Премиум”',
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        20,
-        '.menu .container'
-    ).render();
+        if (!res.ok) {
+            throw new Error(`Coould not fetch ${url}, status: ${res.status}`);
+        }
 
-    new MenuCard(
-        "img/tabs/post.jpg",
-        "post",
-        'Меню "Постное"',
-        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        14,
-        '.menu .container'
-    ).render();
+        return await res.json();//здесь тоже дождаться, пока произойдет декодирование из формата json
+    };
+
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({img, altimg, title, descr, price}) => {
+                new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+            });
+        });
 
     //Forms
 
@@ -243,10 +229,22 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     forms.forEach(item => {
-        postData(item);
+        bindPostData(item);
     });
 
-    function postData(form) {
+    const postData = async (url, data) => {//ключевое слово async сообщает, что внутри будет какой-то асинхронный код
+        const res = await fetch(url, {//его парный оператор await указывается воле тех операций, окончания которых 
+            method: "POST",//надо дождаться 
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();//здесь тоже дождаться, пока произойдет форматирование в json
+    };
+
+    function bindPostData(form) {
         form.addEventListener('submit', (event) => {
             event.preventDefault();
 
@@ -260,30 +258,23 @@ window.addEventListener('DOMContentLoaded', () => {
             
             const formData = new FormData(form); //объект formdata надо превратить в формат json
 
-            //для этого надо создать другой объект и перебрать всё, что в формдате в этот новый объект
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
+            //все данные из формы мы добавили в массив массивов, где ключ/значение переделывают в массив двух элементов
+            //а потом из этого массива создали объект, а его переформатировали в JSON
+            //позже в функцию postData() второй аргумент заменили на реультат константы, идеальная универсальность
 
-            const object = {};
-            formData.forEach(function(value, key) {//почему-то строго в таком порядке поступления аргументов в параметры
-                object[key] = value;//а иначе и не сработает (я про аргументы в скобках)
-            });
-
-           fetch('server.php', {
-               method: "POST",
-               headers: {
-                   'Content-type': 'application/json'
-               },
-               body: JSON.stringify(object)
-           }).then(data => data.text())
-           .then(data => {
+            postData('http://localhost:3000/requests', json)
+            .then(data => {
                 console.log(data);
                 showThanksModal(message.success);
                 statusMessage.remove();
-           })
-           .catch(() => {
+            })
+            .catch(() => {
                 showThanksModal(message.failure);
-           }).finally(() => {
+            })
+            .finally(() => {
                 form.reset();
-           });
+            });
         });
     }
 
