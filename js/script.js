@@ -322,6 +322,26 @@ window.addEventListener('DOMContentLoaded', () => {
         previousModalDialog.style.display = 'block';
     }
 
+    //Sliders
+
+    const slides = document.querySelectorAll('.offer__slide'),
+          prev = document.querySelector('.offer__slider-prev'),
+          next = document.querySelector('.offer__slider-next');
+    let slideIndex = 1;
+
+    function showSlides(n) {
+        if (n > slides.length) {
+            slideIndex = 1;
+        }
+
+        if (n < slides.length) {
+            slideIndex = slides.length;
+        }
+
+        slides.forEach(item => item.style.display = 'none');
+    }
+
+
     fetch('http://localhost:3000/menu')
        .then((data) => data.json())//распаковка из json формата с помощью метода json()
        .then((res) => console.log(res));
