@@ -329,9 +329,23 @@ window.addEventListener('DOMContentLoaded', () => {
           prev = parentSlideContainer.querySelector('.offer__slider-prev'),
           next = parentSlideContainer.querySelector('.offer__slider-next'),
           total = document.querySelector('#total'),
-          current = document.querySelector('#current');
+          current = document.querySelector('#current'),
+          slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+          slidesField = document.querySelector('.offer__slider-inner'),
+          widthSlidesWrapper = window.getComputedStyle(slidesWrapper).width;//потому что getComputedStyle() 
+          //возвратит объект, поэтому к нему можно обратиться и вытащить нужное нам свойство 
+
     let slideIndex = 1;
 
+    slidesField.style.width = 100 * slides.length + '%';//добавляем инлайновский стиль, общему контейнеру
+    //всех дивов
+    slidesField.style.display = 'flex';
+    slidesField.style.transitin = '05s all';
+    slidesField.style.overflow = 'hidden';
+
+    slides.forEach(slide => {
+        slide.style.width = widthSlidesWrapper;
+    });
     
 
     // showSlides(slideIndex);
