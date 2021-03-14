@@ -336,15 +336,39 @@ window.addEventListener('DOMContentLoaded', () => {
           //возвратит объект, поэтому к нему можно обратиться и вытащить нужное нам свойство 
 
     let slideIndex = 1;
+    let offset = 0;
 
-    slidesField.style.width = 100 * slides.length + '%';//добавляем инлайновский стиль, общему контейнеру
-    //всех дивов
+    slidesField.style.width = 100 * slides.length + '%';
     slidesField.style.display = 'flex';
     slidesField.style.transitin = '05s all';
-    slidesField.style.overflow = 'hidden';
+
+    slidesWrapper.style.overflow = 'hidden';//обрезем картинки так, чтобы одна виднелась в ширине обертки
+    //которая была установлена в 100%, когда полоса из картинок установлена в 400%, т.е. во весь размер псевдомассива
 
     slides.forEach(slide => {
         slide.style.width = widthSlidesWrapper;
+    });
+
+    next.addEventListener('click', () => {
+        //т.к. всегда видно только 1 картинку то  скрыты, когда листаем до конца, то видим лишь 1
+        //и 3 ушло влево, и вот то, что ушло влево будет уже в переменной offset и далее ясно
+        if (offset == +widthSlidesWrapper.slice(0, widthSlidesWrapper.length -2) * (slides.length -1)) {
+            offset = 0;
+        } else {
+            offset += +widthSlidesWrapper.slice(0, widthSlidesWrapper.length -2);
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+    });
+
+    prev.addEventListener('click', () => {
+        if (offset == 0) {
+            offset = +widthSlidesWrapper.slice(0, widthSlidesWrapper.length -2) * (slides.length - 1);
+        } else {
+            offset -= +widthSlidesWrapper.slice(0, widthSlidesWrapper.length -2);
+        }
+
+        slidesField.style.transform = `translateX(${offset}px)`;
     });
     
 
