@@ -338,9 +338,17 @@ window.addEventListener('DOMContentLoaded', () => {
     let slideIndex = 1;
     let offset = 0;
 
+    if (slides.length < 10) {
+        total.textContent = `0${slides.length}`;
+        current.textContent = `0${slideIndex}`;
+    } else {
+        total.textContent = slides.length;
+        current.textContent = slideIndex;
+    }
+
     slidesField.style.width = 100 * slides.length + '%';
     slidesField.style.display = 'flex';
-    slidesField.style.transitin = '05s all';
+    slidesField.style.transition = '0.5s all';
 
     slidesWrapper.style.overflow = 'hidden';//обрезем картинки так, чтобы одна виднелась в ширине обертки
     //которая была установлена в 100%, когда полоса из картинок установлена в 400%, т.е. во весь размер псевдомассива
@@ -350,7 +358,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     next.addEventListener('click', () => {
-        //т.к. всегда видно только 1 картинку то  скрыты, когда листаем до конца, то видим лишь 1
+        //т.к. всегда видно только 1 картинку то 3 скрыты, когда листаем до конца, то видим лишь 1
         //и 3 ушло влево, и вот то, что ушло влево будет уже в переменной offset и далее ясно
         if (offset == +widthSlidesWrapper.slice(0, widthSlidesWrapper.length -2) * (slides.length -1)) {
             offset = 0;
@@ -359,6 +367,18 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex == slides.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+
+        if (slides.length < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
     });
 
     prev.addEventListener('click', () => {
@@ -368,7 +388,21 @@ window.addEventListener('DOMContentLoaded', () => {
             offset -= +widthSlidesWrapper.slice(0, widthSlidesWrapper.length -2);
         }
 
-        slidesField.style.transform = `translateX(${offset}px)`;
+        slidesField.style.transform = `translateX(-${offset}px)`;//при пролистывании слайдов они всё равно уходят 
+        //именно влево, поэтмоу минус здесь уместен, а при возврате на первый слайд, все уодят обратно вправо, но
+        //offset обнуляется и этого окаывается достаточно
+
+        if (slideIndex == 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+
+        if (slides.length < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
     });
     
 
